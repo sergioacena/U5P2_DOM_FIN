@@ -821,66 +821,139 @@ const RestaurantsManager = (function () {
         return newDish;
       }
 
-      //Crear menu
-      createMenu(name, description) {
-        for (const menu of this.#menus) {
-          if (menu.menu.name === name) {
-            //Devuelve el menú en el caso de ya existir
-            return menu.menu;
+      // createMenu(name, description) {
+      //   for (const menu of this.#menus) {
+      //     if (menu.menu.name === name) {
+      //       //Devuelve el menú en el caso de ya existir
+      //       return menu.menu;
+      //     }
+      //   }
+
+      //   //Crea un menú nuevo en el caso de no existir previamente
+      //   const newMenu = new this.#productConstructors.Menu(name, description);
+      //   return newMenu;
+      // }
+
+      createMenu(name, description = "") {
+        if (!name || typeof name !== "string") {
+          throw new Error("El nombre del menú no es válido.");
+        }
+
+        //Verifica si ya existe un menú con ese nombre
+        for (const menuObj of this.#menus) {
+          if (menuObj.menu.name === name) {
+            return menuObj.menu;
           }
         }
 
-        //Crea un menú nuevo en el caso de no existir previamente
-        const newMenu = new this.#productConstructors.Menu(name, description);
+        //Crea un nuevo menú
+        const newMenu = new Menu(name, description);
         return newMenu;
       }
 
-      //Crear Allergen
-      createAllergen(name, description) {
+      // createAllergen(name, description) {
+      //   for (const allergen of this.#allergens) {
+      //     if (allergen.allergens.name === name) {
+      //       //Devuelve el alérgeno en el caso de ya existir
+      //       return allergen.allergens;
+      //     }
+      //   }
+
+      //   const newAllergen = new this.#productConstructors.Allergen(
+      //     name,
+      //     description
+      //   );
+      //   return newAllergen;
+      // }
+
+      createAllergen(name, description = "") {
+        if (!name || typeof name !== "string") {
+          throw new Error("El nombre del alérgeno no es válido.");
+        }
+
+        //Verifica si ya existe un alérgeno con ese nombre
         for (const allergen of this.#allergens) {
-          if (allergen.allergens.name === name) {
-            //Devuelve el alérgeno en el caso de ya existir
-            return allergen.allergens;
+          if (allergen.name === name) {
+            return allergen;
           }
         }
 
-        //Crea un alérgeno nuevo en el caso de no existir previamente
-        const newAllergen = new this.#productConstructors.Allergen(
-          name,
-          description
-        );
+        //Crea un nuevo alérgeno
+        const newAllergen = new Allergen(name, description);
         return newAllergen;
       }
 
-      //Crear Category
+      // createCategory(name, description) {
+      //   for (const category of this.#categories) {
+      //     if (category.categories.name === name) {
+      //       //Devuelve la categoría en el caso de ya existir
+      //       return category.categories;
+      //     }
+      //   }
+
+      //   const newCategory = new this.#productConstructors.Category(
+      //     name,
+      //     description
+      //   );
+      //   return newCategory;
+      // }
+
       createCategory(name, description) {
+        if (!name || typeof name !== "string") {
+          throw new Error("Invalid category name");
+        }
+        //Busca una categoría existente con ese nombre
         for (const category of this.#categories) {
-          if (category.categories.name === name) {
-            //Devuelve la categoría en el caso de ya existir
-            return category.categories;
+          if (category.name === name) {
+            return category;
           }
         }
-
-        //Crea una categoría nueva en el caso de no existir previamente
-        const newCategory = new this.#productConstructors.Category(
-          name,
-          description
-        );
+        //Crea una nueva categoría
+        const newCategory = new Category(name, description);
         return newCategory;
       }
 
-      //Crear restaurante
-      createRestaurant(name, description, location) {
-        for (const restaurant of this.#restaurants) {
-          if (restaurant.restaurants.name === name) {
-            //Devuelve el restaurante en el caso de ya existir
-            return restaurant.restaurants;
-          }
-        }
+      // createRestaurant(name, description, location) {
+      //   for (const restaurant of this.#restaurants) {
+      //     if (restaurant.restaurants.name === name) {
+      //       //Devuelve el restaurante en el caso de ya existir
+      //       return restaurant.restaurants;
+      //     }
+      //   }
 
-        //Crea un restaurante nuevo en el caso de no existir previamente
-        const newRestaurant = new Restaurant(name, description, location);
-        return newRestaurant;
+      //   //Crea un restaurante nuevo en el caso de no existir previamente
+      //   const newRestaurant = new Restaurant(name, description, location);
+      //   return newRestaurant;
+      // }
+
+      // createRestaurant(name, description = "", location = undefined) {
+      //   if (!name || typeof name !== "string") {
+      //     throw new Error("El nombre del restaurante no es válido.");
+      //   }
+
+      //   //Verifica si ya existe un restaurante con ese nombre
+      //   for (const restaurant of this.#restaurants) {
+      //     if (restaurant.name === name) {
+      //       return restaurant;
+      //     }
+      //   }
+
+      //   //Crea un nuevo restaurante
+      //   const newRestaurant = new Restaurant(name, description, location);
+      //   return newRestaurant;
+      // }
+
+      createRestaurant(name, description, location) {
+        const existingRestaurant = this.#restaurants.find(
+          (restaurant) => restaurant.name === name
+        );
+
+        if (existingRestaurant !== undefined) {
+          return existingRestaurant;
+        } else {
+          const newRestaurant = new Restaurant(name, description, location);
+          return newRestaurant;
+        }
       }
     }
 

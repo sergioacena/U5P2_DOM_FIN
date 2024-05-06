@@ -108,7 +108,7 @@ class RestaurantController {
       "Mousse de chocolate",
       "Con frambuesas",
       ["Chocolate negro", "Frambuesas", "Azúcar"],
-      "imgs/menu/mousse.jpeg"
+      "imgs/menu/mousse.jpg"
     );
 
     this[MODEL].addDish(
@@ -149,7 +149,10 @@ class RestaurantController {
       "Alergias a los lácteos"
     );
     const allergen3 = this[MODEL].createAllergen("Huevos", "Alergias al huevo");
-    const allergen4 = this[MODEL].createAllergen("Ninguno", "Sin alérgenos");
+    const allergen4 = this[MODEL].createAllergen(
+      "Ningún Alérgeno",
+      "Sin alérgenos"
+    );
 
     this[MODEL].addAllergen(allergen1, allergen2, allergen3, allergen4);
 
@@ -220,6 +223,7 @@ class RestaurantController {
   onInit = () => {
     this[VIEW].showCategories(this[MODEL].getterCategories());
     this[VIEW].bindProductsCategoryList(this.handleProductsCategoryList);
+    this[VIEW].bindShowRandomProduct(this.handleShowProduct);
   };
 
   handleInit = () => {
@@ -228,10 +232,12 @@ class RestaurantController {
 
   onAddCategory = () => {
     this[VIEW].showCategoriesInMenu(this[MODEL].getterCategories());
+    this[VIEW].bindProductsCategoryListInMenu(this.handleProductsCategoryList);
   };
 
   onAddAllergen = () => {
     this[VIEW].showAllergensInMenu(this[MODEL].getterAllergens());
+    this[VIEW].bindProductsAllergenListInMenu(this.handleProductsAllergenList);
   };
 
   onAddMenu = () => {
@@ -242,12 +248,101 @@ class RestaurantController {
     this[VIEW].showRestaurantsInMenu(this[MODEL].getterRestaurants());
   };
 
-  handleProductsCategoryList = (name) => {
-    const category = this[MODEL].createCategory(name);
-    this[VIEW].listProducts(
-      this[MODEL].getDishesInCategory(category),
-      category.name
-    );
+  //uso try-catch debido a infinidad de problemas que me han dado estos metodos
+  handleProductsCategoryList = (categoryName) => {
+    try {
+      //Nos aseguramos que la categoría es válida
+      // console.log("Seleccionando platos para la categoría:", categoryName); //test
+      const category = this[MODEL].createCategory(categoryName, "");
+
+      // Obtener los platos en esta categoría
+      const dishes = this[MODEL].getDishesInCategory(category);
+
+      // Convertir el generador en un array para trabajar con él
+      const dishesArray = [...dishes];
+
+      //Mostramos los platos en la vista
+      // console.log("Platos disponibles en la categoría:", dishesArray); //test
+      this[VIEW].listProducts(dishesArray, categoryName);
+      this[VIEW].bindShowProduct(this.handleShowProduct);
+    } catch (error) {
+      console.error("Error obteniendo platos para la categoría:", error);
+      this[VIEW].listProducts([], categoryName);
+    }
+  };
+
+  // handleProductsAllergenList = (name) => {
+  //   const allerg = this[MODEL].createAllergen(name, "");
+  //   this[VIEW].listProducts(
+  //     this[MODEL].getDishesWithAllergen(allerg),
+  //     allerg.name
+  //   );
+  //   this[VIEW].bindShowProduct(this.handleShowProduct);
+  // };
+
+  handleProductsAllergenList = (allergenName) => {
+    try {
+      // console.log("Seleccionando platos para el alérgeno:", allergenName);
+      const allergen = this[MODEL].createAllergen(allergenName, "");
+
+      const dishes = this[MODEL].getDishesWithAllergen(allergen);
+      const dishesArray = [...dishes];
+
+      // console.log("Platos disponibles con el alérgeno:", dishesArray);
+      this[VIEW].listProducts(dishesArray, `Platos con ${allergenName}`);
+      this[VIEW].bindShowProduct(this.handleShowProduct);
+    } catch (error) {
+      console.error("Error obteniendo platos para el alérgeno:", error);
+      this[VIEW].listProducts([], allergenName);
+    }
+  };
+
+  // handleProductsMenuList = (name) => {
+  //   const menu = this[MODEL].createMenu(name, "");
+  //   this[VIEW].listProducts(this[MODEL].getDishesInMenu(menu.name), menu.name);
+  //   this[VIEW].bindShowProduct(this.handleShowProduct);
+  // };
+
+  //AUN FALLA
+  handleProductsMenuList = (menuName) => {
+    try {
+      // console.log("Seleccionando platos para el menú:", menuName);
+      const menu = this[MODEL].createMenu(menuName, "");
+
+      const dishes = this[MODEL].getDishesInMenu(menu);
+      const dishesArray = [...dishes];
+
+      // console.log("Platos disponibles en el menú:", dishesArray);
+      this[VIEW].listProducts(dishesArray, `Platos del Menú ${menuName}`);
+      this[VIEW].bindShowProduct(this.handleShowProduct);
+    } catch (error) {
+      console.error("Error obteniendo platos para el menú:", error);
+      this[VIEW].listProducts([], menuName);
+    }
+  };
+
+  //AUN FALLA
+  handleRestaurant = (name) => {
+    // console.log("Obteniendo información del restaurante:", name);
+    const rest = this[MODEL].createRestaurant(name, "", new Coordinate(1, 1));
+    this[VIEW].showRestaurant(rest, rest.name);
+  };
+
+  handleShowProduct = (productName) => {
+    try {
+      // console.log("Buscando el plato:", productName);
+      const product = this[MODEL].createDish(productName, "", [], "");
+
+      //Se verifica si la información es válida
+      if (product && product.name === productName) {
+        this[VIEW].showProduct(product, "");
+      } else {
+        this[VIEW].showProduct(null, "No existe este producto en la página.");
+      }
+    } catch (error) {
+      // console.error("Error encontrando el producto:", error);
+      this[VIEW].showProduct(null, "No existe este producto en la página.");
+    }
   };
 }
 
