@@ -159,11 +159,10 @@ class Menu {
 
 //5.Objeto Restaurant
 class Restaurant {
-  #name;
-  #description;
-  #location;
-  constructor(name, description = "", location = undefined) {
-    //Location debe ser opcional por lo que se pone undefined
+  #name = "";
+  #description = "";
+  #location = null;
+  constructor(name, description, location) {
     this.#name = name;
     this.#description = description;
     this.#location = location;
@@ -806,6 +805,32 @@ const RestaurantsManager = (function () {
         return dishesFinder();
       }
 
+      //METODO NECESARIO PARA 5.2
+      //Coger los platos de un menú (para mostrar posteriormente)
+      getDishesInMenu(menu) {
+        if (!(menu instanceof Menu) || menu == null) {
+          throw new NullException();
+        }
+
+        //Coge la posición del menú en la lista
+        const position = this.#getMenuPosition(menu);
+
+        if (position === -1) {
+          throw new NotRegisteredElementException();
+        }
+
+        // Obtén la lista de platos del menú
+        const dishesArray = this.#menus[position].dishes;
+
+        function* dishesInMenu() {
+          for (const dishObj of dishesArray) {
+            yield dishObj.dish;
+          }
+        }
+
+        return dishesInMenu();
+      }
+
       //Creación de objetos
       //Crear plato
       createDish(name, description, ingredients, image) {
@@ -926,34 +951,21 @@ const RestaurantsManager = (function () {
       //   return newRestaurant;
       // }
 
-      // createRestaurant(name, description = "", location = undefined) {
-      //   if (!name || typeof name !== "string") {
-      //     throw new Error("El nombre del restaurante no es válido.");
-      //   }
-
-      //   //Verifica si ya existe un restaurante con ese nombre
-      //   for (const restaurant of this.#restaurants) {
-      //     if (restaurant.name === name) {
-      //       return restaurant;
-      //     }
-      //   }
-
-      //   //Crea un nuevo restaurante
-      //   const newRestaurant = new Restaurant(name, description, location);
-      //   return newRestaurant;
-      // }
-
-      createRestaurant(name, description, location) {
-        const existingRestaurant = this.#restaurants.find(
-          (restaurant) => restaurant.name === name
-        );
-
-        if (existingRestaurant !== undefined) {
-          return existingRestaurant;
-        } else {
-          const newRestaurant = new Restaurant(name, description, location);
-          return newRestaurant;
+      createRestaurant(name, description = "", location = undefined) {
+        if (!name || typeof name !== "string") {
+          throw new Error("El nombre del restaurante no es válido.");
         }
+
+        for (const restaurant of this.#restaurants) {
+          if (restaurant.name === name) {
+            // Devuelve el restaurante si ya existe
+            return restaurant;
+          }
+        }
+
+        // Crear un nuevo restaurante
+        const newRestaurant = new Restaurant(name, description, location);
+        return newRestaurant;
       }
     }
 

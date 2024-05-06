@@ -242,10 +242,12 @@ class RestaurantController {
 
   onAddMenu = () => {
     this[VIEW].showMenusInMenu(this[MODEL].getterMenus());
+    this[VIEW].bindProductsMenuListInMenu(this.handleProductsMenuList);
   };
 
   onAddRestaurant = () => {
     this[VIEW].showRestaurantsInMenu(this[MODEL].getterRestaurants());
+    this[VIEW].bindRestaurantsInMenu(this.handleRestaurant);
   };
 
   //uso try-catch debido a infinidad de problemas que me han dado estos metodos
@@ -306,22 +308,19 @@ class RestaurantController {
   //AUN FALLA
   handleProductsMenuList = (menuName) => {
     try {
-      // console.log("Seleccionando platos para el menú:", menuName);
       const menu = this[MODEL].createMenu(menuName, "");
 
       const dishes = this[MODEL].getDishesInMenu(menu);
       const dishesArray = [...dishes];
 
-      // console.log("Platos disponibles en el menú:", dishesArray);
-      this[VIEW].listProducts(dishesArray, `Platos del Menú ${menuName}`);
+      this[VIEW].listProducts(dishesArray, `Menú "${menuName}"`);
       this[VIEW].bindShowProduct(this.handleShowProduct);
     } catch (error) {
-      console.error("Error obteniendo platos para el menú:", error);
-      this[VIEW].listProducts([], menuName);
+      // console.error("Error obteniendo platos para el menú:", error);
+      this[VIEW].listProducts([], `Platos del Menú ${menuName}`);
     }
   };
 
-  //AUN FALLA
   handleRestaurant = (name) => {
     // console.log("Obteniendo información del restaurante:", name);
     const rest = this[MODEL].createRestaurant(name, "", new Coordinate(1, 1));

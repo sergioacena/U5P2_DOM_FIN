@@ -160,10 +160,10 @@ class RestaurantView {
       div.classList.add("col-md-4");
       div.insertAdjacentHTML(
         "beforeend",
-        `<figure class="card card-product-grid card-lg"> <a data-serial="${dish.dish.name}" href="#single-product" class="img-wrap"><img class="${dish.dish.constructor.name}-style" src="${dish.dish.image}"></a>
+        `<figure class="card card-product-grid card-lg"> <a data-dish="${dish.dish.name}" href="#single-product" class="img-wrap"><img class="${dish.dish.constructor.name}-style" src="${dish.dish.image}"></a>
           <figcaption class="info-wrap">
             <div class="row">
-              <div class="col-md-8"> <a data-serial="${dish.dish.name}" href="#single-product" class="title2">${dish.dish.name}</a> </div>
+              <div class="col-md-8"> <a data-dish="${dish.dish.name}" href="#single-product" class="title2">${dish.dish.name}</a> </div>
               <div class="col-md-4">
                 <div class="rating text-right"> <i class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i> </div>
               </div>
@@ -235,10 +235,10 @@ class RestaurantView {
           div.classList.add("col-md-4");
           div.insertAdjacentHTML(
             "beforeend",
-            `<figure class="card card-product-grid card-lg"> <a data-serial="${dish.name}" href="#single-product" class="img-wrap"><img class="${dish.constructor.name}-style" src="${dish.image}"></a>
+            `<figure class="card card-product-grid card-lg"> <a data-dish="${dish.name}" href="#single-product" class="img-wrap"><img class="${dish.constructor.name}-style" src="${dish.image}"></a>
                     <figcaption class="info-wrap">
                     <div class="row">
-                        <div class="col-md-8"> <a data-serial="${dish.name}" href="#single-product" class="title">${dish.name}</a> </div>
+                        <div class="col-md-8"> <a data-dish="${dish.name}" href="#single-product" class="title">${dish.name}</a> </div>
                         <div class="col-md-4">
                         <div class="rating text-right"> <i class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i> </div>
                         </div>
@@ -305,20 +305,71 @@ class RestaurantView {
     }
   }
 
+  // bindRestaurantsInMenu(handler) {
+  //   const navRest = document.getElementById("navRest");
+  //   const links = navRest.nextSibling.querySelectorAll("a");
+  //   for (const link of links) {
+  //     link.addEventListener("click", (event) => {
+  //       handler(event.currentTarget.dataset.restaurant);
+  //     });
+  //   }
+  // }
+
   bindRestaurantsInMenu(handler) {
     const navRest = document.getElementById("navRest");
-    const links = navRest.nextSibling.querySelectorAll("a");
-    for (const link of links) {
-      link.addEventListener("click", (event) => {
-        handler(event.currentTarget.dataset.restaurant);
-      });
+    if (navRest) {
+      // Selecciona todos los enlaces dentro del menú desplegable de restaurantes
+      const links = navRest.nextSibling.querySelectorAll("a");
+      for (const link of links) {
+        link.addEventListener("click", (event) => {
+          event.preventDefault(); // Evita la navegación predeterminada
+          handler(event.currentTarget.dataset.restaurant); // Llama al controlador pasando el nombre del restaurante
+        });
+      }
+    } else {
+      console.warn("No se encontró el elemento con ID 'navRest'");
     }
   }
 
+  // showRestaurant(rest, title) {
+  //   this.categories.replaceChildren();
+  //   if (this.categories.children.length > 1)
+  //     this.categories.children[1].remove();
+  //   const container = document.createElement("div");
+  //   container.id = "restaurantes";
+  //   container.classList.add("container");
+  //   container.classList.add("my-3");
+  //   container.insertAdjacentHTML("beforeend", '<div class="row"> </div>');
+
+  //   const div = document.createElement("div");
+  //   div.classList.add("col-md-4");
+  //   div.insertAdjacentHTML(
+  //     "beforeend",
+  //     `<div class="col-lg-3 col-md-6"><a data-category="${
+  //       rest.name
+  //     }" href="#product-list">
+
+  //     <div class="cat-list-text rest-info">
+  //       <h3>Nombre - ${rest.name}</h3>
+  //       <div>Descripción - ${rest.description}</div>
+  //       <div>Localización - ${rest.location.toString()}</div>
+
+  //     </div>
+  //   </a>
+  // </div>`
+  //   );
+  //   container.children[0].append(div);
+
+  //   container.insertAdjacentHTML("afterbegin", `<h1>${title}</h1><br>`);
+  //   this.categories.append(container);
+  // }
+
   showRestaurant(rest, title) {
+    console.log("Mostrando restaurante:", rest, "con título:", title);
     this.categories.replaceChildren();
-    if (this.categories.children.length > 1)
+    if (this.categories.children.length > 1) {
       this.categories.children[1].remove();
+    }
     const container = document.createElement("div");
     container.id = "restaurantes";
     container.classList.add("container");
@@ -332,15 +383,14 @@ class RestaurantView {
       `<div class="col-lg-3 col-md-6"><a data-category="${
         rest.name
       }" href="#product-list">
-      
-      <div class="cat-list-text rest-info">
-        <h3>Nombre - ${rest.name}</h3>
-        <div>Descripción - ${rest.description}</div>
-        <div>Localización - ${rest.location.toString()}</div>
-
-      </div>
-    </a>
-  </div>`
+        <div class="cat-list-text rest-info">
+            <h3>Nombre - ${rest.name}</h3>
+            <div>Descripción - ${rest.description}</div>
+            <div>Localización - ${
+              rest.location ? rest.location.toString() : "No disponible"
+            }</div>
+        </div>
+    </a></div>`
     );
     container.children[0].append(div);
 
@@ -409,13 +459,13 @@ class RestaurantView {
     const links = productList.querySelectorAll("a.img-wrap");
     for (const link of links) {
       link.addEventListener("click", (event) => {
-        handler(event.currentTarget.dataset.serial);
+        handler(event.currentTarget.dataset.dish);
       });
     }
     const images = productList.querySelectorAll("figcaption a");
     for (const link of links) {
       link.addEventListener("click", (event) => {
-        handler(event.currentTarget.dataset.serial);
+        handler(event.currentTarget.dataset.dish);
       });
     }
   }
@@ -425,13 +475,13 @@ class RestaurantView {
     const links = productList.querySelectorAll("a.img-wrap");
     for (const link of links) {
       link.addEventListener("click", (event) => {
-        handler(event.currentTarget.dataset.serial);
+        handler(event.currentTarget.dataset.dish);
       });
     }
     const images = productList.querySelectorAll("figcaption a");
     for (const link of links) {
       link.addEventListener("click", (event) => {
-        handler(event.currentTarget.dataset.serial);
+        handler(event.currentTarget.dataset.dish);
       });
     }
   }
