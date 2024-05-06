@@ -39,76 +39,76 @@ class RestaurantController {
       "Ensalada césar",
       "Con pollo a la parrilla",
       ["Lechuga", "Pollo", "Salsa Cesar"],
-      "img/menu/enscesar.jpg"
+      "imgs/menu/enscesar.jpg"
     );
     const dish2 = this[MODEL].createDish(
       "Puré de patata gratinado",
       "Dorado y burbujeante",
       ["Patatas", "Queso", "Leche"],
-      "img/menu/purepatata.jpeg"
+      "imgs/menu/purepatata.jpeg"
     );
     const dish3 = this[MODEL].createDish(
       "Carpaccio de res",
       "Con rúcula",
       ["Carne de res", "Rúcula", "Aceite de oliva"],
-      "img/menu/carpaccio.webp"
+      "imgs/menu/carpaccio.webp"
     );
     const dish4 = this[MODEL].createDish(
       "Risotto de hongos",
       "Arroz cremoso cocido en vino blanco",
       ["Arroz", "Hongos", "Vino blanco"],
-      "img/menu/risotto.jpg"
+      "imgs/menu/risotto.jpg"
     );
     const dish5 = this[MODEL].createDish(
       "Churrasco de ternera",
       "Marinado en especias",
       ["Churrasco", "Especias", "Chimichurri"],
-      "img/menu/churrasco.jpg"
+      "imgs/menu/churrasco.jpg"
     );
 
     const dish6 = this[MODEL].createDish(
       "Entrecot a la pimienta",
       "Con patatas gratinadas",
       ["Entrecot de res", "Pimienta", "Sal"],
-      "img/menu/entrecot2.jpg"
+      "imgs/menu/entrecot2.jpg"
     );
 
     const dish7 = this[MODEL].createDish(
       "Parrillada mixta",
       "Seleccion de carnes a la parrilla",
       ["Bistec", "Chuleta de cerdo", "Pechuga de pollo"],
-      "img/menu/parrillada.jpg"
+      "imgs/menu/parrillada.jpg"
     );
 
     const dish8 = this[MODEL].createDish(
       "Pollo al Curry",
       "Con arroz basmati",
       ["Pollo", "Pasta de curry", "Arroz"],
-      "img/menu/pollocurry.webp"
+      "imgs/menu/pollocurry.webp"
     );
     const dish9 = this[MODEL].createDish(
       "Tarta de manzana",
       "Con helado de canela",
       ["Manzana", "Azúcar", "Canela"],
-      "img/menu/tartamanzana.webp"
+      "imgs/menu/tartamanzana.webp"
     );
     const dish10 = this[MODEL].createDish(
       "Profiteroles",
       "Rellenos de crema",
       ["Crema pastelera", "Masa profiteroles", "Azucar"],
-      "img/menu/profi.jpg"
+      "imgs/menu/profi.jpg"
     );
     const dish11 = this[MODEL].createDish(
       "Tarta de queso",
       "Con frutos rojos",
       ["Queso", "Crema", "Mermelada"],
-      "img/menu/tartqueso.webp"
+      "imgs/menu/tartqueso.webp"
     );
     const dish12 = this[MODEL].createDish(
       "Mousse de chocolate",
       "Con frambuesas",
       ["Chocolate negro", "Frambuesas", "Azúcar"],
-      "img/menu/mousse.jpeg"
+      "imgs/menu/mousse.jpeg"
     );
 
     this[MODEL].addDish(
@@ -200,7 +200,7 @@ class RestaurantController {
       coor2
     );
     const rest3 = this[MODEL].createRestaurant(
-      "ElAsador Eats",
+      "El Asador En Casa",
       "De la parrilla a tu puerta",
       coor3
     );
@@ -211,10 +211,15 @@ class RestaurantController {
   onLoad = () => {
     this[LOAD_RESTAURANT_OBJECTS]();
     this.onAddCategory();
+    this[VIEW].showRandomDishes(this[MODEL].getterDishes());
+    this.onAddAllergen();
+    this.onAddMenu();
+    this.onAddRestaurant();
   };
 
   onInit = () => {
     this[VIEW].showCategories(this[MODEL].getterCategories());
+    this[VIEW].bindProductsCategoryList(this.handleProductsCategoryList);
   };
 
   handleInit = () => {
@@ -223,6 +228,26 @@ class RestaurantController {
 
   onAddCategory = () => {
     this[VIEW].showCategoriesInMenu(this[MODEL].getterCategories());
+  };
+
+  onAddAllergen = () => {
+    this[VIEW].showAllergensInMenu(this[MODEL].getterAllergens());
+  };
+
+  onAddMenu = () => {
+    this[VIEW].showMenusInMenu(this[MODEL].getterMenus());
+  };
+
+  onAddRestaurant = () => {
+    this[VIEW].showRestaurantsInMenu(this[MODEL].getterRestaurants());
+  };
+
+  handleProductsCategoryList = (name) => {
+    const category = this[MODEL].createCategory(name);
+    this[VIEW].listProducts(
+      this[MODEL].getDishesInCategory(category),
+      category.name
+    );
   };
 }
 

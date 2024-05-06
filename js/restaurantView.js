@@ -62,7 +62,75 @@ class RestaurantView {
     this.menu.append(li);
   }
 
-  showDishes(dishes) {
+  showAllergensInMenu(allergens) {
+    console.log("añadiendo alergenos al menú", allergens); //testeo
+    const li = document.createElement("li");
+    li.classList.add("nav-item");
+    li.classList.add("dropdown");
+    li.insertAdjacentHTML(
+      "beforeend",
+      `<a class="nav-link dropdown-toggle" href="#" id="navAllerg" role="button"
+			data-bs-toggle="dropdown" aria-expanded="false">Alérgenos</a>`
+    );
+    const container = document.createElement("ul");
+    container.classList.add("dropdown-menu");
+
+    for (const allergen of allergens) {
+      container.insertAdjacentHTML(
+        "beforeend",
+        `<li><a data-allergen="${allergen.name}" class="dropdown-item" href="#product-list">${allergen.name}</a></li>`
+      );
+    }
+    li.append(container);
+    this.menu.append(li);
+  }
+
+  showMenusInMenu(menus) {
+    console.log("añadiendo menus al menú", menus); //testeo
+    const li = document.createElement("li");
+    li.classList.add("nav-item");
+    li.classList.add("dropdown");
+    li.insertAdjacentHTML(
+      "beforeend",
+      `<a class="nav-link dropdown-toggle" href="#" id="navMenu" role="button"
+			data-bs-toggle="dropdown" aria-expanded="false">Menús</a>`
+    );
+    const container = document.createElement("ul");
+    container.classList.add("dropdown-menu");
+    for (const menu of menus) {
+      container.insertAdjacentHTML(
+        "beforeend",
+        `<li><a data-menu="${menu.menu.name}" class="dropdown-item" href="#product-list">${menu.menu.name}</a></li>`
+      );
+    }
+    li.append(container);
+    this.menu.append(li);
+  }
+
+  //mostrar restaurantes en el menú de navegación
+  showRestaurantsInMenu(restaurants) {
+    console.log("añadiendo restaurantes al menú", restaurants); //testeo
+    const li = document.createElement("li");
+    li.classList.add("nav-item");
+    li.classList.add("dropdown");
+    li.insertAdjacentHTML(
+      "beforeend",
+      `<a class="nav-link dropdown-toggle" href="#" id="navRest" role="button"
+			data-bs-toggle="dropdown" aria-expanded="false">Restaurantes</a>`
+    );
+    const container = document.createElement("ul");
+    container.classList.add("dropdown-menu");
+    for (const restaurant of restaurants) {
+      container.insertAdjacentHTML(
+        "beforeend",
+        `<li><a data-restaurant="${restaurant.name}" class="dropdown-item" href="#product-list">${restaurant.name}</a></li>`
+      );
+    }
+    li.append(container);
+    this.menu.append(li);
+  }
+
+  showRandomDishes(dishes) {
     //copiamos los datos del iterador en un nuevo array
     const allDishes = [...dishes];
     const randomDishes = [];
@@ -78,22 +146,24 @@ class RestaurantView {
     //Limpia cualquier plato existente en el contenedor this.dishes
     this.dishes.replaceChildren();
     //Si hay más de un hijo en this.dishes elimina el segundo hijo (para evitar duplicados)
-    if (this.dishes.children.length > 1) this.dishes.children[1].remove();
+    if (this.dishes.children.length > 1) {
+      this.dishes.children[1].remove();
+    }
     const container = document.createElement("div");
-    container.id = "rand-list";
+    container.id = "random-list";
     container.classList.add("container");
     container.classList.add("my-3");
     container.insertAdjacentHTML("beforeend", '<div class="row"> </div>');
 
-    for (const product of randomDishes) {
+    for (const dish of randomDishes) {
       const div = document.createElement("div");
       div.classList.add("col-md-4");
       div.insertAdjacentHTML(
         "beforeend",
-        `<figure class="card card-product-grid card-lg"> <a data-serial="${product.dish.name}" href="#single-product" class="img-wrap"><img class="${product.dish.constructor.name}-style" src="${product.dish.image}"></a>
+        `<figure class="card card-product-grid card-lg"> <a data-serial="${dish.dish.name}" href="#single-product" class="img-wrap"><img class="${dish.dish.constructor.name}-style" src="${dish.dish.image}"></a>
           <figcaption class="info-wrap">
             <div class="row">
-              <div class="col-md-8"> <a data-serial="${product.dish.name}" href="#single-product" class="title">${product.dish.name}</a> </div>
+              <div class="col-md-8"> <a data-serial="${dish.dish.name}" href="#single-product" class="title2">${dish.dish.name}</a> </div>
               <div class="col-md-4">
                 <div class="rating text-right"> <i class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i> </div>
               </div>
@@ -101,29 +171,70 @@ class RestaurantView {
           </figcaption>
         </figure>`
       );
-      // Agrega el div creado al contenedor de platos
       container.children[0].append(div);
     }
-
-    // Agrega un título al contenedor de platos
     container.insertAdjacentHTML(
       "afterbegin",
       `<h1 class= "title">Platos aleatorios</h1><br>`
     );
 
-    // Agrega el contenedor completo al elemento this.dishes
     this.dishes.append(container);
   }
 
-  //   bindProductsCategoryList(handler) {
-  //     const categoryList = document.getElementById("category-list");
-  //     const links = categoryList.querySelectorAll("a");
-  //     for (const link of links) {
-  //       link.addEventListener("click", (event) => {
-  //         handler(event.currentTarget.dataset.category);
-  //       });
-  //     }
-  //   }
+  listProducts(products, title) {
+    this.categories.replaceChildren();
+    if (this.categories.children.length > 1)
+      this.categories.children[1].remove();
+    const container = document.createElement("div");
+    container.id = "product-list";
+    container.classList.add("container");
+    container.classList.add("my-3");
+    container.insertAdjacentHTML("beforeend", '<div class="row"> </div>');
+
+    for (const dish of products) {
+      const div = document.createElement("div");
+      div.classList.add("col-md-4");
+      div.insertAdjacentHTML(
+        "beforeend",
+        `<figure class="card card-product-grid card-lg"> <a data-serial="${dish.dish.name}" href="#single-product" class="img-wrap"><img class="${dish.dish.constructor.name}-style" src="${dish.dish.image}"></a>
+					<figcaption class="info-wrap">
+						<div class="row">
+							<div class="col-md-8"> <a data-serial="${dish.dish.name}" href="#single-product" class="title">${dish.dish.name}</a> </div>
+							<div class="col-md-4">
+								<div class="rating text-right"> <i class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i> <i class="bi bi-star-fill"></i> </div>
+							</div>
+						</div>
+					</figcaption>
+				</figure>`
+      );
+      container.children[0].append(div);
+    }
+    container.insertAdjacentHTML(
+      "afterbegin",
+      `<h1 class= "title">${title}</h1><br>`
+    );
+    this.categories.append(container);
+  }
+
+  bindProductsCategoryList(handler) {
+    const categoryList = document.getElementById("category-list");
+    const links = categoryList.querySelectorAll("a");
+    for (const link of links) {
+      link.addEventListener("click", (event) => {
+        handler(event.currentTarget.dataset.category);
+      });
+    }
+  }
+
+  bindProductsCategoryListInMenu(handler) {
+    const navCats = document.getElementById("navCats");
+    const links = navCats.nextSibling.querySelectorAll("a");
+    for (const link of links) {
+      link.addEventListener("click", (event) => {
+        handler(event.currentTarget.dataset.category);
+      });
+    }
+  }
 }
 
 export default RestaurantView;
